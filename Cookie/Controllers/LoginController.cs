@@ -1,27 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Cookie.Models;
 
-namespace Cookie.Controllers
-{
-    public class LoginController : Controller
-    {
-        public IActionResult Create()
-        {
-            return View();
-        }
+namespace Cookie.Controllers;
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(Login login)
+public class LoginController : Controller
+{
+    [HttpGet]
+    public IActionResult Create()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Create(Login login)
+    {
+        if (ModelState.IsValid)
         {
-            if (ModelState.IsValid)
+            var options = new CookieOptions
             {
-                CookieOptions option = new CookieOptions();
-                option.Expires = DateTime.Now.AddDays(10); // срок хранения куки - 10 дней
-                Response.Cookies.Append("login", login.UserName, option); // создание куки
-                return RedirectToAction("Index", "Home");
-            }
-            return View(login);
+                Expires = DateTime.Now.AddDays(10) // термін зберігання кукі - 10 днів
+            };
+
+            Response.Cookies.Append("login", login.UserName!, options); // створення кукі
+            return RedirectToAction("Index", "Home");
         }
+        return View(login);
     }
 }

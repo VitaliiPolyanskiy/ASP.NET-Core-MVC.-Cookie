@@ -1,57 +1,50 @@
 ﻿@model Cookie.Models.Login
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
     Layout = null;
+    var isLoggedIn = Context.Request.Cookies.ContainsKey("login");
 }
 
 <!DOCTYPE html>
-
-<html>
+<html lang="uk">
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="utf-8" />
-    <title>Авторизация</title>
+    <title>Авторизація</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    @using (Html.BeginForm())
-    {
-        @Html.AntiForgeryToken()
-        <div>
-            @if (this.Context.Request.Cookies["login"] == null)
-            {
-                @Html.ValidationSummary(true, "")
-                <div>
-                    @Html.LabelFor(model => model.UserName)
-                    <div>
-                        @Html.EditorFor(model => model.UserName)
-                        @Html.ValidationMessageFor(model => model.UserName, "")
-                    </div>
+<body class="bg-light d-flex align-items-center justify-content-center vh-100">
+    <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
+        <h3 class="text-center mb-4">Авторизація</h3>
+
+        @if (!isLoggedIn)
+        {
+            <form asp-controller="Login" asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="UserName" class="form-label"></label>
+                    <input asp-for="UserName" class="form-control" placeholder="Введіть логін" />
+                    <span asp-validation-for="UserName" class="text-danger small"></span>
                 </div>
 
-                <div>
-                    @Html.LabelFor(model => model.Password)
-                    <div>
-                        @Html.PasswordFor(model => model.Password)
-                        @Html.ValidationMessageFor(model => model.Password, "")
-                    </div>
+                <div class="mb-4">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" class="form-control" placeholder="Введіть пароль" />
+                    <span asp-validation-for="Password" class="text-danger small"></span>
                 </div>
 
-                <div>
-                    <div>
-                        <input type="submit" value="Войти" />
-                    </div>
-                </div>
-            }
-            else
-            {
-                <div>
-                    <div>
-                        Вводить логин и пароль уже не нужно!
-                    </div>
-                    @Html.ActionLink("На главную", "Index", "Home")
-                </div>
-            }
-        </div>
-    }
+                <button type="submit" class="btn btn-primary w-100">Увійти</button>
+            </form>
+        }
+        else
+        {
+            <div class="alert alert-success text-center">
+                Вводити логін та пароль вже не потрібно!
+            </div>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary w-100 mt-2">На головну</a>
+        }
+    </div>
 </body>
 </html>

@@ -1,22 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Cookie.Controllers
-{
-    public class HomeController : Controller
-    {
-        public ActionResult Index()
-        {
-            if (Request.Cookies["login"] == null)
-            {
-                return RedirectToAction("Create", "Login");
-            }
-            return View();
-        }
+namespace Cookie.Controllers;
 
-        public ActionResult Logout()
+public class HomeController : Controller
+{
+    public IActionResult Index()
+    {
+        if (!Request.Cookies.ContainsKey("login"))
         {
-            Response.Cookies.Delete("login"); // удаление куки
             return RedirectToAction("Create", "Login");
         }
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Logout()
+    {
+        Response.Cookies.Delete("login"); // видалення кукі
+        return RedirectToAction("Create", "Login");
     }
 }
